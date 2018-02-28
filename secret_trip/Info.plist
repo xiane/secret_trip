@@ -28,6 +28,8 @@
 	<string>We need your location to deliver pizza.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>We need your location to deliver pizza always.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location always usage description.</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
