@@ -10,7 +10,7 @@ import UIKit
 import CoreLocation
 import MapKit
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDelegate, MKMapViewDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDelegate, MKMapViewDelegate, UIGestureRecognizerDelegate {
     let locationManager = CLLocationManager()
     
     @IBOutlet weak var myMapView: MKMapView!
@@ -82,10 +82,60 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDe
         //locationManager.requesetWhenInUseAuthorization()
         
         if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.startUpdatingLocation()
+            //locationManager.delegate = self
+            //locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            //ocationManager.startUpdatingLocation()
         }
+        
+        let tgr = UITapGestureRecognizer(target:self, action: #selector(self.tapGestureHandler))
+        tgr.delegate = self
+        myMapView.addGestureRecognizer(tgr)
+    }
+    
+    @objc func tapGestureHandler(tgr: UITapGestureRecognizer)
+    {
+        let touchPoint = tgr.location(in: myMapView)
+        let touchMapCoordinate = myMapView.convert(touchPoint, toCoordinateFrom: myMapView)
+        print("tapGestureHandler: touchMapCoordinate = \(touchMapCoordinate.latitude),\(touchMapCoordinate.longitude)")
+        
+        let geoCoder = CLGeocoder()
+        let location = CLLocation(latitude: touchMapCoordinate.latitude, longitude: touchMapCoordinate.longitude)
+        
+        geoCoder.reverseGeocodeLocation(location, completionHandler: { (placemarks, error) -> Void in
+            
+            // Place details
+            var placeMark: CLPlacemark!
+            placeMark = placemarks?[0]
+            
+            // Address dictionary
+            //print(placeMark.areasOfInterest!)
+            
+            // Location name
+            if let locationName = placeMark.name {
+                print(locationName)
+            }
+            
+            // Street address
+            if let street = placeMark.thoroughfare {
+                print(street)
+            }
+            
+            // City
+            if let city = placeMark.region {
+                print(city)
+            }
+            
+            // Zip code
+            if let zip = placeMark.postalCode {
+                print(zip)
+            }
+            
+            // Country
+            if let country = placeMark.country {
+                print(country)
+            }
+            
+        })
     }
     
     var points:[CLLocationCoordinate2D] = []
@@ -139,6 +189,4 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UISearchBarDe
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
-
 }
